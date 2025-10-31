@@ -1,0 +1,74 @@
+from abc import ABC, abstractmethod
+from typing import Any
+from enum import Enum, auto
+
+from core.logger import get_logger
+
+logger = get_logger(__name__)
+
+
+class VariableType(Enum):
+  TEXT = auto()
+  NUMBER = auto()
+  IMAGE_URL = auto()
+
+
+class Variable(ABC):
+  def __init__(self, variable_type: VariableType):
+    self.variable_type = variable_type
+
+  def is_type(self, t: VariableType) -> bool:
+    return self.variable_type == t
+
+  @abstractmethod
+  def get_value(self) -> Any:
+    pass
+
+  @abstractmethod
+  def get_text(self) -> str:
+    pass
+
+
+class TextVariable(Variable):
+  def __init__(self, text: str):
+    super().__init__(VariableType.TEXT)
+    self.text = text
+
+  def get_text(self) -> str:
+    return self.text
+
+  def get_value(self) -> str:
+    return self.text
+
+  def __repr__(self):
+    return f"TextVariable(\"{self.text}\")"
+
+
+class NumberVariable(Variable):
+  def __init__(self, number: float):
+    super().__init__(VariableType.NUMBER)
+    self.number: float = number
+
+  def get_value(self) -> float:
+    return self.number
+
+  def get_text(self) -> str:
+    return f"{self.number}"
+
+  def __repr__(self):
+    return f"NumberVariable({self.number})"
+
+
+class ImageURLVariable(Variable):
+  def __init__(self, url: str):
+    super().__init__(VariableType.IMAGE_URL)
+    self.url = url
+
+  def get_value(self) -> str:
+    return self.url
+
+  def get_text(self) -> str:
+    return self.url
+
+  def __repr__(self):
+    return f"ImageURLVariable(url=\"{self.url}\")"
