@@ -12,152 +12,152 @@ logger = get_logger(__name__)
 
 
 class OsuAPI:
-  """
-  OsuAPI is a wrapper around the osu! API.
-  """
-  BASE_URL = "https://osu.ppy.sh/api/v2"
-  TOKEN_URL = "https://osu.ppy.sh/oauth/token"
-  SESSION_PATH = "session.json"
-
-  def __init__(self, client_id: str, client_secret: str):
     """
-    Initializes the API wrapper.
-    :param client_id: OAuth2 ID obtained from the osu API website.
-    :param client_secret: OAuth2 client secret obtained from the osu API website.
+    OsuAPI is a wrapper around the osu! API.
     """
-    if client_id is None or client_secret is None:
-      raise ValueError("client_id and client_secret are required")
+    BASE_URL = "https://osu.ppy.sh/api/v2"
+    TOKEN_URL = "https://osu.ppy.sh/oauth/token"
+    SESSION_PATH = "session.json"
 
-    self.client_id = client_id
-    self.client_secret = client_secret
-    self.access_token: str | None = None
-    self.token_expires_at: float = -1.0
+    def __init__(self, client_id: str, client_secret: str):
+        """
+        Initializes the API wrapper.
+        :param client_id: OAuth2 ID obtained from the osu API website.
+        :param client_secret: OAuth2 client secret obtained from the osu API website.
+        """
+        if client_id is None or client_secret is None:
+            raise ValueError("client_id and client_secret are required")
 
-    logger.info("OsuAPI initialized")
+        self.client_id = client_id
+        self.client_secret = client_secret
+        self.access_token: str | None = None
+        self.token_expires_at: float = -1.0
 
-  def authenticate(self) -> None:
-    """
-    Authenticates with the osu API using the client credentials.
+        logger.info("OsuAPI initialized")
 
-    This method requests an access token and stores it in memory.
-    Automatically sets an expiration timestamp based on `expires_in`.
+    def authenticate(self) -> None:
+        """
+        Authenticates with the osu API using the client credentials.
 
-    Can raise OsuAPIAuthError if an error occurs.
-    """
-    if self.is_session_alive():
-      logger.warning("Tried to authenticate against an existing session")
-      return
+        This method requests an access token and stores it in memory.
+        Automatically sets an expiration timestamp based on `expires_in`.
 
-    if self._recover_session():
-      logger.info("Recovered OsuAPI session")
-      return
+        Can raise OsuAPIAuthError if an error occurs.
+        """
+        if self.is_session_alive():
+            logger.warning("Tried to authenticate against an existing session")
+            return
 
-    self._create_session()
+        if self._recover_session():
+            logger.info("Recovered OsuAPI session")
+            return
 
-  def _create_session(self):
-    logger.info("OsuAPI creating session...")
-    data = {
-      "client_id": self.client_id,
-      "client_secret": self.client_secret,
-      "grant_type": "client_credentials",
-      "scope": "public",
-    }
+        self._create_session()
 
-    try:
-      response = requests.request("POST", OsuAPI.TOKEN_URL, data=data, timeout=10)
-    except requests.RequestException as e:
-      raise OsuAPIAuthError(f"Network error during authentication: {e}")
+    def _create_session(self):
+        logger.info("OsuAPI creating session...")
+        data = {
+            "client_id": self.client_id,
+            "client_secret": self.client_secret,
+            "grant_type": "client_credentials",
+            "scope": "public",
+        }
 
-    if response.status_code != 200:
-      raise OsuAPIAuthError(f"OsuAPI authentication failed: {response.text}")
+        try:
+            response = requests.request("POST", OsuAPI.TOKEN_URL, data=data, timeout=10)
+        except requests.RequestException as e:
+            raise OsuAPIAuthError(f"Network error during authentication: {e}")
 
-    session = response.json()
-    self.access_token = session["access_token"]
-    self.token_expires_at = time.time() + session["expires_in"]
+        if response.status_code != 200:
+            raise OsuAPIAuthError(f"OsuAPI authentication failed: {response.text}")
 
-    self._save_session('session.json')
+        session = response.json()
+        self.access_token = session["access_token"]
+        self.token_expires_at = time.time() + session["expires_in"]
 
-    logger.info("OsuAPI authenticated")
+        self._save_session(OsuAPI.SESSION_PATH)
 
-  def _recover_session(self) -> bool:
-    """
-    Tries to recover an OsuAPI session.
-    Recovers when there's an active session file `SESSION_PATH`
-    :return: True when session is recovered else False
-    """
-    if not os.path.exists(OsuAPI.SESSION_PATH):
-      return False  # there is no session
+        logger.info("OsuAPI authenticated")
 
-    try:
-      with open(OsuAPI.SESSION_PATH) as f:
-        session = json.load(f)
+    def _recover_session(self) -> bool:
+        """
+        Tries to recover an OsuAPI session.
+        Recovers when there's an active session file `SESSION_PATH`
+        :return: True when session is recovered else False
+        """
+        if not os.path.exists(OsuAPI.SESSION_PATH):
+            return False  # there is no session
 
-        self.client_id = session["client_id"]
-        self.access_token = session["token"]
-        self.token_expires_at = session["expires_at"]
+        try:
+            with open(OsuAPI.SESSION_PATH) as f:
+                session = json.load(f)
 
-        if time.time() >= self.token_expires_at:
-          logger.info("OsuAPI session expired")
-          return False  # session is expired
+                self.client_id = session["client_id"]
+                self.access_token = session["token"]
+                self.token_expires_at = session["expires_at"]
 
-        return True
-    except Exception as e:
-      logger.warning(f"Recover error: {e}")
-      return False  # encountered error while recovering session
+                if time.time() >= self.token_expires_at:
+                    logger.info("OsuAPI session expired")
+                    return False  # session is expired
 
-  def is_session_alive(self) -> bool:
-    """
-    Session is alive when there is an access token and is not expired
-    :return: Is session alive
-    """
-    return self.access_token and time.time() < self.token_expires_at
+                return True
+        except Exception as e:
+            logger.warning(f"Recover error: {e}")
+            return False  # encountered error while recovering session
 
-  def _ensure_token(self) -> None:
-    """
-    Refreshes token if expired
-    """
-    if not self.is_session_alive():
-      self.authenticate()
+    def is_session_alive(self) -> bool:
+        """
+        Session is alive when there is an access token and is not expired
+        :return: Is session alive
+        """
+        return self.access_token and time.time() < self.token_expires_at
 
-  # god written deep human intelligence error
-  def _get(self, endpoint: str, sure=False):
-    if endpoint.startswith('/') and not sure:
-      raise RuntimeError("Are you sure?")
-    self._ensure_token()
-    # REQUEST
-    url = f"{OsuAPI.BASE_URL}/{endpoint}"
-    payload = {}
-    headers = {
-      "Authorization": f"Bearer {self.access_token}"
-    }
+    def _ensure_token(self) -> None:
+        """
+        Refreshes token if expired
+        """
+        if not self.is_session_alive():
+            self.authenticate()
 
-    response = requests.request("GET", url, headers=headers, data=payload)
-    if response.status_code != 200:
-      raise RuntimeError(f"OsuAPI GET failed: {response.text}")
-    return response.json()
+    # god written deep human intelligence error
+    def _get(self, endpoint: str, sure=False):
+        if endpoint.startswith('/') and not sure:
+            raise RuntimeError("Are you sure?")
+        self._ensure_token()
+        # REQUEST
+        url = f"{OsuAPI.BASE_URL}/{endpoint}"
+        payload = {}
+        headers = {
+            "Authorization": f"Bearer {self.access_token}"
+        }
 
-  def get_user(self, user_name: str) -> User:
-    json_data = self._get(f"users/@{user_name}")
-    return User(json_data)
+        response = requests.request("GET", url, headers=headers, data=payload)
+        if response.status_code != 200:
+            raise RuntimeError(f"OsuAPI GET failed: {response.text}")
+        return response.json()
 
-  def get_user_bests(self, user_id: str):
-    return self._get(f"users/{user_id}/scores/best")
+    def get_user(self, user_name: str) -> User:
+        json_data = self._get(f"users/@{user_name}")
+        return User(json_data)
 
-  def lookup_beatmap(self, checksum: str):
-    return self._get(f"beatmaps/lookup?checksum={checksum}")
+    def get_user_bests(self, user_id: str):
+        return self._get(f"users/{user_id}/scores/best")
 
-  def _save_session(self, filename: str) -> None:
-    """
-    Saves current session data to file.
-    DOES NOT CHECK IS THE SESSION ALIVE!
-    """
-    data = {
-      "client_id": self.client_id,
-      "token": self.access_token,
-      "expires_at": self.token_expires_at,
-    }
+    def lookup_beatmap(self, checksum: str):
+        return self._get(f"beatmaps/lookup?checksum={checksum}")
 
-    with open(filename, 'w') as f:
-      json.dump(data, f, indent=4)
+    def _save_session(self, filename: str) -> None:
+        """
+        Saves current session data to file.
+        DOES NOT CHECK IS THE SESSION ALIVE!
+        """
+        data = {
+            "client_id": self.client_id,
+            "token": self.access_token,
+            "expires_at": self.token_expires_at,
+        }
 
-    logger.info("OsuAPI session saved")
+        with open(filename, 'w') as f:
+            json.dump(data, f, indent=4)
+
+        logger.info("OsuAPI session saved")
