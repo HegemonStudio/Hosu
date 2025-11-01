@@ -6,7 +6,7 @@ from core.layout import Layout, Layer
 from core.logger import get_logger
 from core.variable_map import VariableMap
 from core.variables import TextVariable, NumberVariable, ImageURLVariable
-from core.widgets import TextWidget, ImageWidget
+from core.widgets import TextWidget, ImageWidget, RectWidget
 from osu.api import OsuAPI
 from renderer.pillow import PillowRenderer
 
@@ -24,10 +24,16 @@ def main():
 
     layout = Layout(800, 400, [
         Layer([
+            RectWidget().set_color("#8E12FF").set_width(1000).set_height(1000)
+        ]),
+        Layer([
             TextWidget("Wynik: {SCORE}").set_x(1 / 2),
             TextWidget("Name: {PLAYER}"),
             ImageWidget("{BACKGROUND}")
         ]),
+        Layer([
+            TextWidget("{BACKGROUND}").set_x(1/2).set_y(1/2).set_color("#FF0000")
+        ])
     ])
 
     vars = VariableMap()
