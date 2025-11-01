@@ -13,7 +13,6 @@ from renderer.pillow import PillowRenderer
 
 logger = get_logger("Hosu")
 
-
 def main():
     logger.info("Hello Hosu!")
     dotenv.load_dotenv()
@@ -25,8 +24,8 @@ def main():
 
     layout = Layout(800, 400, [
         Layer([
-          TextWidget(text="Wynik: {SCORE}"),
-          ImageWidget()
+          TextWidget("Wynik: {SCORE}"),
+          ImageWidget("{BACKGROUND}")
         ]),
     ])
 
