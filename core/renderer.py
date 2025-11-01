@@ -1,3 +1,4 @@
+import traceback
 from abc import ABC, abstractmethod
 from enum import Enum
 from typing import Any, Tuple
@@ -40,13 +41,12 @@ class Renderer(ABC):
         pass
 
     @abstractmethod
-    def draw_text(self, position: Tuple[float, float], text: str, font: Any = None, color: RGBA = (255, 255, 255, 255),
-                  align: TextAlignment = TextAlignment.LEFT) -> None:
+    def draw_text(self, position: Tuple[float, float], text: str, font_size: float = 0, color: RGBA = (255, 255, 255, 255),
+                  align: TextAlignment = TextAlignment.LEFT, drop_shadow: bool = False) -> None:
         """
         Draws text on the given position.
         :param position: Position of the text to be drawn.
         :param text: Text to be drawn.
-        :param font: Font of the text to be drawn.
         :param color: Color of the text to be drawn.
         :param align: Alignment of the text to be drawn.
         """
@@ -78,3 +78,4 @@ class Renderer(ABC):
                 widget.draw(self, variable_map)
             except Exception as e:
                 logger.error(f"Encountered error while rendering widget {widget.__class__.__name__}: {e}")
+                print(traceback.format_exc())

@@ -10,17 +10,23 @@ logger = logging.getLogger(__name__)
 
 
 class TextWidget(Widget):
-    def __init__(self, template: str):
+    def __init__(self, template: str = ""):
         super().__init__()
         # TODO: think about the naming
         self.content: str = template
         self.x: float = 0.0
         self.y: float = 0.0
-        self.font_size = 20
+        self.font_size = 1
         self.alignment: TextAlignment = TextAlignment.CENTER
         self.color: RGBA = (255, 255, 255, 255)
+        self.drop_shadow: bool = False
 
         self._template = TextTemplate(template)
+
+    def set_text(self, text: str) -> Self:
+        self.content = text
+        self._template = TextTemplate(text)
+        return self
 
     def set_x(self, x: float) -> Self:
         self.x = x
@@ -40,6 +46,11 @@ class TextWidget(Widget):
 
     def set_color(self, color: Union[RGBA, str, Tuple[int, int, int]]) -> Self:
         self.color = parse_color(color)
+        logger.info(f"Color = {self.color}")
+        return self
+
+    def please_drop_shadow(self):
+        self.drop_shadow = True
         return self
 
     def draw(self, renderer, variable_map):
@@ -47,7 +58,8 @@ class TextWidget(Widget):
         text = self._template.resolve(variable_map)
 
         # Render the text
-        renderer.draw_text((self.x, self.y), text, color=self.color, align=self.alignment)
+        c = (int(self.color[0]), int(self.color[1]), int(self.color[2]), int(self.color[3]))
+        renderer.draw_text((self.x, self.y), text, color=c, align=self.alignment, font_size=self.font_size, drop_shadow=self.drop_shadow)
 
 
 class ImageWidget(Widget):
@@ -63,9 +75,9 @@ class RectWidget(Widget):
         super().__init__()
         self.x: float = 0.0
         self.y: float = 0.0
-        self.width: float = 0.0
-        self.height: float = 0.0
-        self.color: RGBA = (255, 255, 255, 255)
+        self.width: float = 1.0
+        self.height: float = 1.0
+        self.color = [255, 255, 255, 255]
 
     def set_x(self, x: float) -> Self:
         self.x = x
@@ -85,7 +97,13 @@ class RectWidget(Widget):
 
     def set_color(self, color: Union[RGBA, str, Tuple[int, int, int]]) -> Self:
         self.color = parse_color(color)
+        logger.info(f"Color = {self.color}")
         return self
 
     def draw(self, renderer, variable_map):
-        renderer.draw_rect((self.x, self.y), (self.width, self.height), color=self.color, fill=True)
+        c = (int(self.color[0]), int(self.color[1]), int(self.color[2]), int(self.color[3]))
+        renderer.draw_rect((self.x, self.y), (self.width, self.height), color=c, fill=True)
+
+    def set_opacity(self, param: float) -> Self:
+        self.color[3] = int(255 * param)
+        return self

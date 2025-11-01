@@ -12,9 +12,9 @@ BACKGROUND_COLOR = (0, 0, 0, 255)
 
 
 class PillowRenderer(Renderer):
-    def draw_text(self, position: Tuple[float, float], text: str, font: Any = None, color: RGBA = (255, 255, 255, 255),
-                  align: TextAlignment = TextAlignment.LEFT) -> None:
-        font = ImageFont.truetype("resources/fonts/Roboto.ttf", 30)
+    def draw_text(self, position: Tuple[float, float], text: str, font_size: float = 1.0, color: RGBA = (255, 255, 255, 255),
+                  align: TextAlignment = TextAlignment.LEFT, drop_shadow: bool = False) -> None:
+        font = ImageFont.truetype("resources/fonts/Roboto.ttf", self.layout.width / 16 * font_size)
 
         x = self.layout.width * position[0]
         y = self.layout.height * position[1]
@@ -30,11 +30,18 @@ class PillowRenderer(Renderer):
             case _:
                 pass
 
+        if drop_shadow:
+            self.draw_text((position[0] + 0.002, position[1] + 0.002), text, font_size=font_size, color=(0,0,0,255), align=align, drop_shadow=False)
+
         self.draw.text((x, y), text, font=font, fill=color)
 
     def draw_rect(self, position: Tuple[float, float], size: Tuple[int, int], color: RGBA = (255, 255, 255, 255),
                   fill: bool = True) -> None:
-        self.draw.rectangle((position[0], position[1], position[0] + size[0], position[1] + size[1]), fill=color)
+        x = self.layout.width * position[0]
+        y = self.layout.height * position[1]
+        w = self.layout.width * size[0]
+        h = self.layout.height * size[1]
+        self.draw.rectangle(((x, y), (x + w, y + h)), fill=color)
 
     def __init__(self):
         self.image: Image.Image | None = None

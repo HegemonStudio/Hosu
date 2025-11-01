@@ -1,5 +1,9 @@
+import base64
+import json
 import os
 import struct
+from dataclasses import dataclass
+from json import JSONEncoder
 from typing import BinaryIO
 
 
@@ -65,6 +69,7 @@ class OsuReplay:
                 self.count_gekis = read_short(replay)
                 self.count_katus = read_short(replay)
                 self.count_misses = read_short(replay)
+                self.accuracy = (self.count_50 * 50 + self.count_100 * 100 + self.count_300 * 300) / (300 * (self.count_50 + self.count_100 + self.count_300 + self.count_misses))
                 self.total_score = read_int(replay)
                 self.greatest_combo = read_short(replay)
                 self.is_perfect = read_byte(replay)
@@ -82,10 +87,35 @@ class OsuReplay:
         """
         Determines the mode of given replay
         """
-        mode: int = read_byte(self._replay)
+        mode: int = read_byte(replay)
         return {
             0: 'osu!',
             1: 'osu!taiko',
             2: 'osu!catch',
             3: 'osu!mania',
         }.get(mode, 'unknown')
+
+
+    def toJSON(self):
+        return {
+            "mode": self.mode,
+            "osu_version": self.osu_version,
+            "beatmap_hash": self.beatmap_hash,
+            "user_name": self.user_name,
+            "replay_hash": self.replay_hash,
+            "count_300": self.count_300,
+            "count_100": self.count_100,
+            "count_50": self.count_50,
+            "count_gekis": self.count_gekis,
+            "count_katus": self.count_katus,
+            "count_misses": self.count_misses,
+            "accuracy": self.accuracy,
+            "total_score": self.total_score,
+            "greatest_combo": self.greatest_combo,
+            "is_perfect": self.is_perfect,
+            "mods": self.mods,
+            "life_bar": self.life_bar,
+            "timestamp": self.timestamp,
+            "compressed_data": base64.b64encode(self.compressed_data).decode("utf-8"),
+        }
+

@@ -5,7 +5,7 @@ import time
 import requests
 
 from core.logger import get_logger
-from osu.data import User
+from osu.data import User, Beatmap
 from osu.errors import OsuAPIAuthError
 from osu.utils import format_token_expiry
 
@@ -16,9 +16,10 @@ class OsuAPI:
     """
     OsuAPI is a wrapper around the osu! API.
     """
+    OSU_URL = "https://osu.ppy.sh/"
     BASE_URL = "https://osu.ppy.sh/api/v2"
     TOKEN_URL = "https://osu.ppy.sh/oauth/token"
-    SESSION_PATH = "session.json"
+    SESSION_PATH = "data/session.json"
 
     def __init__(self, client_id: str, client_secret: str):
         """
@@ -147,8 +148,21 @@ class OsuAPI:
     def get_user_bests(self, user_id: str):
         return self._get(f"users/{user_id}/scores/best")
 
-    def lookup_beatmap(self, checksum: str):
-        return self._get(f"beatmaps/lookup?checksum={checksum}")
+    def lookup_beatmap(self, checksum: str) -> Beatmap:
+        json_data = self._get(f"beatmaps/lookup?checksum={checksum}")
+        return Beatmap(json_data)
+
+    def download_beatmap(self, beatmap_id: int) -> str:
+        url = f"{OsuAPI.OSU_URL}/osu/{beatmap_id}"
+        payload = {}
+        headers = {
+            "Authorization": f"Bearer {self.access_token}"
+        }
+
+        response = requests.request("GET", url, headers=headers, data=payload)
+        if response.status_code != 200:
+            raise RuntimeError(f"OsuAPI GET failed: {response.text}")
+        return response.text
 
     def _save_session(self, filename: str) -> None:
         """
