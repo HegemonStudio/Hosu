@@ -3,8 +3,6 @@ from PIL import Image, ImageDraw
 from core.layout import Layout
 from core.logger import get_logger
 from core.renderer import Renderer
-from core.variable_map import VariableMap
-from core.widgets import TextWidget
 
 logger = get_logger(__name__)
 

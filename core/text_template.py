@@ -1,23 +1,24 @@
 from dataclasses import dataclass
-from typing import List, Dict, Union, Optional, Callable
+from typing import List, Union, Optional, Callable, Any
 
 from core.logger import get_logger
 from core.variable_map import VariableMap
 
 logger = get_logger(__name__)
 
-"""
-Tokens
-"""
+
 @dataclass
 class Literal:
     text: str
+
 
 @dataclass
 class Variable:
     name: str
 
+
 Token = Union[Literal, Variable]
+
 
 class TemplateLexer:
     def __init__(self, content: str):
@@ -70,15 +71,15 @@ class TemplateLexer:
         """
         if self.empty():
             return None
-        # If next char is '{' start reading vairable
+        # If next char is '{' start reading variable
         if self.peek() == '{':
-            self.chop(1) # skip {
+            self.chop(1)  # skip {
             self.trim()
             varname = self.chop_until(lambda x: x == '}').rstrip().upper().replace(' ', '_')
             if self.empty():
                 logger.warning(f"Unclosed variable: {varname}")
                 return Variable(varname)
-            self.chop(1) # skip }
+            self.chop(1)  # skip }
             return Variable(varname)
         else:
             # Literal until '{'
@@ -93,15 +94,17 @@ class TemplateLexer:
                 tokens.append(token)
         return tokens
 
+
 class TextTemplate:
     """
     Supports plain text and {VAR} placeholders.
     """
+
     def __init__(self, text: str):
         self.original = text
         self.tokens: List[Token] = TemplateLexer(text).tokenize()
 
-    def resolve(self, variables: Union[dict[str, str], VariableMap]) -> str:
+    def resolve(self, variables: Union[dict[str, Any], VariableMap]) -> str:
         if isinstance(variables, VariableMap):
             return self.resolve_varmap(variables)
         elif isinstance(variables, dict):
@@ -109,7 +112,7 @@ class TextTemplate:
         else:
             raise TypeError(f"Unsupported variable container: {type(variables)}")
 
-    def resolve_dict(self, variables: dict[str, str]) -> str:
+    def resolve_dict(self, variables: dict[str, Any]) -> str:
         parts: List[str] = []
         for token in self.tokens:
             if isinstance(token, Literal):
@@ -124,7 +127,7 @@ class TextTemplate:
             else:
                 logger.warning(f"Unsupported token type: {type(token)}")
         return "".join(parts)
-    
+
     def resolve_varmap(self, variables: VariableMap) -> str:
         parts: List[str] = []
         for token in self.tokens:
@@ -156,7 +159,6 @@ class TextTemplate:
     def get_tokens(self) -> List[Token]:
         return self.tokens
 
-
     def __str__(self):
         """
         String representation of the template (unresolved).
@@ -171,4 +173,3 @@ class TextTemplate:
 
     def __repr__(self):
         return f"{self.__class__.__name__}{self.__str__()}"
-

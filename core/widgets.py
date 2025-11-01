@@ -1,5 +1,4 @@
 import logging
-
 from typing import Self
 
 from core.errors import UnsupportedWidgetError
@@ -49,4 +48,3 @@ class ImageWidget(Widget):
         self.source: str = source
         self.x: float = 0.0
         self.y: float = 0.0
-

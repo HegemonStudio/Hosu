@@ -9,10 +9,10 @@ class User:
     def __init__(self, user_data: Any):
         self.user_data = user_data
 
-        self.avatar_url: str   = self._data("avatar_url")
+        self.avatar_url: str = self._data("avatar_url")
         self.country_code: str = self._data("country_code")
-        self.id: int           = self._data("id")
-        self.username: str     = self._data("username")
+        self.id: int = self._data("id")
+        self.username: str = self._data("username")
 
     def _data(self, key: str, default: Any = None) -> Any:
         """

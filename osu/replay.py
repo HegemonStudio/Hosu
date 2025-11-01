@@ -1,5 +1,5 @@
-import struct
 import os
+import struct
 from typing import BinaryIO
 
 
@@ -53,26 +53,26 @@ class OsuReplay:
         # Try to read and parse replay file
         try:
             with open(path, "rb") as replay:
-                self.mode            = self._read_mode(replay)
-                self.osu_version     = read_int(replay)
-                self.beatmap_hash    = read_osustring(replay)  # beatmap MD5 hash
-                self.user_name       = read_osustring(replay)
-                self.replay_hash     = read_osustring(replay)  # replay MD5 hash
+                self.mode = self._read_mode(replay)
+                self.osu_version = read_int(replay)
+                self.beatmap_hash = read_osustring(replay)  # beatmap MD5 hash
+                self.user_name = read_osustring(replay)
+                self.replay_hash = read_osustring(replay)  # replay MD5 hash
 
-                self.count_300       = read_short(replay)
-                self.count_100       = read_short(replay)
-                self.count_50        = read_short(replay)
-                self.count_gekis     = read_short(replay)
-                self.count_katus     = read_short(replay)
-                self.count_misses    = read_short(replay)
-                self.total_score     = read_int(replay)
-                self.greatest_combo  = read_short(replay)
-                self.is_perfect      = read_byte(replay)
-                self.mods            = read_int(replay)
-                self.life_bar        = read_osustring(replay)
-                self.timestamp       = read_long(replay)  # windows ticks
+                self.count_300 = read_short(replay)
+                self.count_100 = read_short(replay)
+                self.count_50 = read_short(replay)
+                self.count_gekis = read_short(replay)
+                self.count_katus = read_short(replay)
+                self.count_misses = read_short(replay)
+                self.total_score = read_int(replay)
+                self.greatest_combo = read_short(replay)
+                self.is_perfect = read_byte(replay)
+                self.mods = read_int(replay)
+                self.life_bar = read_osustring(replay)
+                self.timestamp = read_long(replay)  # windows ticks
 
-                data_length          = read_int(replay)
+                data_length = read_int(replay)
                 self.compressed_data = replay.read(data_length)
                 # self.online_score_id = read_long(replay)
         except Exception as e:
@@ -89,4 +89,3 @@ class OsuReplay:
             2: 'osu!catch',
             3: 'osu!mania',
         }.get(mode, 'unknown')
-

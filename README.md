@@ -1,10 +1,12 @@
 # Hosu
+
 Hosu is a thumbnail generator for osu!.
 Built in Python with a flexible architecture based on **Layout**, **Renderer**, **Variables** and **OsuAPI**.
 
 ---
 
 ## Requirements
+
 - Python 3.10+
 - Git (to work with the repository)
 - pip

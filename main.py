@@ -8,10 +8,10 @@ from core.variable_map import VariableMap
 from core.variables import TextVariable, NumberVariable, ImageURLVariable
 from core.widgets import TextWidget, ImageWidget
 from osu.api import OsuAPI
-from osu.replay import OsuReplay
 from renderer.pillow import PillowRenderer
 
 logger = get_logger("Hosu")
+
 
 def main():
     logger.info("Hello Hosu!")
@@ -24,9 +24,9 @@ def main():
 
     layout = Layout(800, 400, [
         Layer([
-          TextWidget("Wynik: {SCORE}").set_x(1/2),
-          TextWidget("Name: {PLAYER}"),
-          ImageWidget("{BACKGROUND}")
+            TextWidget("Wynik: {SCORE}").set_x(1 / 2),
+            TextWidget("Name: {PLAYER}"),
+            ImageWidget("{BACKGROUND}")
         ]),
     ])
 
@@ -42,4 +42,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

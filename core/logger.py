@@ -1,5 +1,6 @@
 import logging
 import sys
+
 from colorama import init, Fore, Style
 
 # Initializes colorama (on Windows enables ANSI codes)
