@@ -1,5 +1,7 @@
 import logging
 
+from typing import Self
+
 from core.errors import UnsupportedWidgetError
 from core.layout import Widget
 from core.text_template import TextTemplate
@@ -14,8 +16,21 @@ class TextWidget(Widget):
         self.content: str = template
         self.x: float = 0.0
         self.y: float = 0.0
+        self.font_size = 20
 
         self._template = TextTemplate(template)
+
+    def set_x(self, x: float) -> Self:
+        self.x = x
+        return self
+
+    def set_y(self, y: float) -> Self:
+        self.y = y
+        return self
+
+    def set_font_size(self, font_size) -> Self:
+        self.font_size = font_size
+        return self
 
     def draw(self, renderer, variable_map):
         if hasattr(renderer, "draw_text"):
@@ -23,7 +38,7 @@ class TextWidget(Widget):
             text = self._template.resolve(variable_map)
 
             # Render the text
-            renderer.draw_text(text)
+            renderer.draw_text(text, self.x, self.y)
         else:
             raise UnsupportedWidgetError(renderer.__class__.__name__, self.__class__.__name__)
 

@@ -24,7 +24,8 @@ def main():
 
     layout = Layout(800, 400, [
         Layer([
-          TextWidget("Wynik: {SCORE}"),
+          TextWidget("Wynik: {SCORE}").set_x(1/2),
+          TextWidget("Name: {PLAYER}"),
           ImageWidget("{BACKGROUND}")
         ]),
     ])

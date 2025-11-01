@@ -23,8 +23,10 @@ class PillowRenderer(Renderer):
         self.image = Image.new("RGBA", (layout.width, layout.height), BACKGROUND_COLOR)
         self.draw = ImageDraw.Draw(self.image)
 
-    def draw_text(self, text: str):
-        self.draw.text((0, 0), text)
+    def draw_text(self, text: str = "", midpoint_x: float = 0.0, midpoint_y: float = 0.0):
+        x = self.layout.width * midpoint_x
+        y = self.layout.height * midpoint_y
+        self.draw.text((x, y), text)
 
     def end(self) -> Image.Image:
         logger.info("PillowRenderer end")
