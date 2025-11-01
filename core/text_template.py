@@ -159,7 +159,7 @@ class TextTemplate:
     def get_tokens(self) -> List[Token]:
         return self.tokens
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         String representation of the template (unresolved).
         """
@@ -171,5 +171,5 @@ class TextTemplate:
                 parts.append(f"{{{token.name}}}")
         return "".join(parts)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"{self.__class__.__name__}{self.__str__()}"

@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Self
 
 from core.logger import get_logger
 from core.variables import Variable
@@ -10,9 +10,10 @@ class VariableMap:
     def __init__(self):
         self._vars: Dict[str, Variable] = {}
 
-    def set(self, name: str, var: Variable):
+    def set(self, name: str, var: Variable) -> Self:
         name = name.upper()
         self._vars[name] = var
+        return self
 
     def get_variable(self, name: str) -> Variable | None:
         name = name.upper()
@@ -23,7 +24,7 @@ class VariableMap:
     def __getitem__(self, name: str) -> Variable | None:
         return self.get_variable(name)
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self._vars)
 
     def has(self, name: str) -> bool:
@@ -37,5 +38,5 @@ class VariableMap:
             return f"{{{name}}}"
         return self._vars[name].get_text()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"VariableMap({self._vars})"

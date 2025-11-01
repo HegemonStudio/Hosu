@@ -40,7 +40,7 @@ class TextVariable(Variable):
     def get_value(self) -> str:
         return self.text
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"TextVariable(\"{self.text}\")"
 
 
@@ -55,7 +55,7 @@ class NumberVariable(Variable):
     def get_text(self) -> str:
         return f"{self.number}"
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"NumberVariable({self.number})"
 
 
@@ -70,5 +70,5 @@ class ImageURLVariable(Variable):
     def get_text(self) -> str:
         return self.url
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"ImageURLVariable(url=\"{self.url}\")"
