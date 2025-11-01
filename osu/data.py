@@ -9,12 +9,12 @@ class User:
     def __init__(self, user_data: Any):
         self.user_data = user_data
 
-        self.avatar_url = self._data("avatar_url")
-        self.country_code = self._data("country_code")
-        self.id = self._data("id")
-        self.username = self._data("username")
+        self.avatar_url: str   = self._data("avatar_url")
+        self.country_code: str = self._data("country_code")
+        self.id: int           = self._data("id")
+        self.username: str     = self._data("username")
 
-    def _data(self, key: str, default: Any = None):
+    def _data(self, key: str, default: Any = None) -> Any:
         """
         :param key: key in user json file
         :param default: default value if key not in user json file

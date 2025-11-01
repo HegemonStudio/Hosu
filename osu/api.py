@@ -7,6 +7,7 @@ import requests
 from core.logger import get_logger
 from osu.data import User
 from osu.errors import OsuAPIAuthError
+from osu.utils import format_token_expiry
 
 logger = get_logger(__name__)
 
@@ -46,13 +47,16 @@ class OsuAPI:
         """
         if self.is_session_alive():
             logger.warning("Tried to authenticate against an existing session")
+            logger.info(format_token_expiry(self.token_expires_at))
             return
 
         if self._recover_session():
             logger.info("Recovered OsuAPI session")
+            logger.info(format_token_expiry(self.token_expires_at))
             return
 
         self._create_session()
+        logger.info(format_token_expiry(self.token_expires_at))
 
     def _create_session(self):
         logger.info("OsuAPI creating session...")
