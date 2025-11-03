@@ -6,8 +6,12 @@ class JsonData:
     """
 
     def __init__(self, json: Any):
+        # TODO: requires Mapping
+
+        # TODO: change it to dict[str, Any] if needed
         self.json = json
 
+    # TODO: change it to get
     def _data(self, key: str, default: Any = None) -> Any:
         """
         :param key: key in json file
@@ -21,6 +25,8 @@ class JsonData:
             raise ValueError(f"Not found {key} in data.")
 
         return self.json[key]
+
+    # TODO: add require
 
 """
 osu! data objects

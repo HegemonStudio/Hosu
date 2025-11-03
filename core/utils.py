@@ -14,6 +14,7 @@ def dump_json(data: Any, filename: str) -> None:
         logger.info(f"Dumped json into: {filename}")
 
 
+# TODO: create Color class
 def parse_color(color: Union[str, Tuple[int, int, int], Tuple[int, int, int, int]]) -> list[int]:
     """Parse a hex color string (with optional # and alpha) into an (R, G, B, [A]) tuple."""
     if isinstance(color, str):

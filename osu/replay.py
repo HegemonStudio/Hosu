@@ -50,6 +50,7 @@ def read_osustring(file: BinaryIO) -> str:
 
 
 class OsuReplay:
+    # TODO: change str to Path
     def __init__(self, path: str):
         # Check does replay file exists
         if not os.path.exists(path):

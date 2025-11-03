@@ -19,6 +19,7 @@ class TextAlignment(str, Enum):
 RGBA = Tuple[int, int, int, int]
 
 
+# TODO: think about the renderer API, maybe it should be different
 class Renderer(ABC):
     """
     Abstract base class for all renderers (Pillow etc.).

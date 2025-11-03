@@ -17,7 +17,7 @@ class WidgetText(Widget):
 
     def __init__(self, template: str = ""):
         super().__init__()
-        # TODO: think about the naming
+        # TODO: think about the naming (template, content, text)
         self.content: str = template
         self.x: float = 0.0
         self.y: float = 0.0

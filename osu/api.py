@@ -20,6 +20,7 @@ class OsuAPI:
     BASE_URL = "https://osu.ppy.sh/api/v2"
     TOKEN_URL = "https://osu.ppy.sh/oauth/token"
     SESSION_PATH = "data/session.json"
+    # TODO: add session path using Path from pathlib
 
     def __init__(self, client_id: str, client_secret: str):
         """
@@ -34,6 +35,7 @@ class OsuAPI:
         self.client_secret = client_secret
         self.access_token: str | None = None
         self.token_expires_at: float = -1.0
+        # TODO: add _http session later for connection pooling
 
         logger.info("OsuAPI initialized")
 
@@ -72,6 +74,8 @@ class OsuAPI:
             response = requests.request("POST", OsuAPI.TOKEN_URL, data=data, timeout=10)
         except requests.RequestException as e:
             raise OsuAPIAuthError(f"Network error during authentication: {e}")
+        except ValueError as e:
+            raise OsuAPIAuthError(f"Invalid JSON response during authentication: {e}")
 
         if response.status_code != 200:
             raise OsuAPIAuthError(f"OsuAPI authentication failed: {response.text}")
@@ -79,6 +83,8 @@ class OsuAPI:
         session = response.json()
         self.access_token = session["access_token"]
         self.token_expires_at = time.time() + session["expires_in"]
+        if self.access_token is None or not  self.token_expires_at:
+            raise OsuAPIAuthError("OsuAPI authentication failed: invalid token data")
 
         self._save_session(OsuAPI.SESSION_PATH)
 
@@ -90,6 +96,7 @@ class OsuAPI:
         Recovers when there's an active session file `SESSION_PATH`
         :return: True when session is recovered else False
         """
+        # TODO: use pathlib Path
         if not os.path.exists(OsuAPI.SESSION_PATH):
             return False  # there is no session
 
@@ -97,6 +104,7 @@ class OsuAPI:
             with open(OsuAPI.SESSION_PATH) as f:
                 session = json.load(f)
 
+                # TODO: use get with default values
                 self.client_id = session["client_id"]
                 self.access_token = session["token"]
                 self.token_expires_at = session["expires_at"]
@@ -115,6 +123,7 @@ class OsuAPI:
         Session is alive when there is an access token and is not expired
         :return: Is session alive
         """
+        # Change it to boolean expression
         return self.access_token and time.time() < self.token_expires_at
 
     def _ensure_token(self) -> None:
@@ -126,8 +135,10 @@ class OsuAPI:
 
     # god written deep human intelligence error
     def _get(self, endpoint: str, sure=False):
+        # TODO: just strip leading slash from endpoint
         if endpoint.startswith('/') and not sure:
             raise RuntimeError("Are you sure?")
+
         self._ensure_token()
         # REQUEST
         url = f"{OsuAPI.BASE_URL}/{endpoint}"
@@ -136,6 +147,8 @@ class OsuAPI:
             "Authorization": f"Bearer {self.access_token}"
         }
 
+        # TODO: add timeout, error handling, if code not authenticated create session again
+        # TODO: use requests.Session for connection pooling
         response = requests.request("GET", url, headers=headers, data=payload)
         if response.status_code != 200:
             raise RuntimeError(f"OsuAPI GET failed: {response.text}")
@@ -164,11 +177,14 @@ class OsuAPI:
             raise RuntimeError(f"OsuAPI GET failed: {response.text}")
         return response.text
 
+    # TODO: use pathlib Path
     def _save_session(self, filename: str) -> None:
         """
         Saves current session data to file.
         DOES NOT CHECK IS THE SESSION ALIVE!
         """
+        # TODO: mkdirs if not exists
+
         data = {
             "client_id": self.client_id,
             "token": self.access_token,
