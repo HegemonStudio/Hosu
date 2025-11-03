@@ -8,7 +8,7 @@ init(autoreset=True)
 
 LEVEL_COLORS = {
     logging.DEBUG: Fore.LIGHTBLACK_EX,
-    logging.INFO: Fore.WHITE,
+    logging.INFO: Fore.BLUE,
     logging.WARNING: Fore.YELLOW,
     logging.ERROR: Fore.LIGHTRED_EX,
     logging.CRITICAL: Fore.LIGHTMAGENTA_EX,
@@ -32,14 +32,14 @@ def get_logger(name: str) -> logging.Logger:
     """
     logger = logging.getLogger(name)
 
-    # Prevent duplicate if get_logger is called multiple times
+    # Prevent duplicate if the get_logger is called multiple times
     if logger.handlers:
         return logger
 
     # Create handler for logger
     handler = logging.StreamHandler(sys.stdout)
     formatter = ColoredFormatter(
-        fmt="[%(asctime)s] [%(name)s] [%(levelname)s] %(message)s",
+        fmt="[%(asctime)s] [%(levelname)8s] [%(name)s] %(message)s",
         datefmt="%H:%M:%S",
     )
     handler.setFormatter(formatter)

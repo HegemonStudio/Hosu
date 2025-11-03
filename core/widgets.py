@@ -2,6 +2,8 @@ import logging
 from typing import Self, Union, Tuple
 
 from core.layout import Widget
+from core.namespaced_key import NamespacedKey
+from core.registry.widget_registry import RegisterWidget
 from core.renderer import TextAlignment, RGBA
 from core.text_template import TextTemplate
 from core.utils import parse_color
@@ -9,7 +11,10 @@ from core.utils import parse_color
 logger = logging.getLogger(__name__)
 
 
-class TextWidget(Widget):
+@RegisterWidget
+class WidgetText(Widget):
+    KEY = NamespacedKey("HoSu", "widget_text")
+
     def __init__(self, template: str = ""):
         super().__init__()
         # TODO: think about the naming
@@ -62,7 +67,9 @@ class TextWidget(Widget):
         renderer.draw_text((self.x, self.y), text, color=c, align=self.alignment, font_size=self.font_size, drop_shadow=self.drop_shadow)
 
 
-class ImageWidget(Widget):
+@RegisterWidget
+class WidgetImage(Widget):
+    KEY = NamespacedKey("hosu", "widget_image")
     def __init__(self, source: str):
         super().__init__()
         self.source: str = source
@@ -70,7 +77,9 @@ class ImageWidget(Widget):
         self.y: float = 0.0
 
 
-class RectWidget(Widget):
+@RegisterWidget
+class WidgetRect(Widget):
+    KEY = NamespacedKey("hosu", "widget_rect")
     def __init__(self):
         super().__init__()
         self.x: float = 0.0

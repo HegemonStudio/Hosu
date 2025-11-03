@@ -4,11 +4,14 @@ from typing import List
 
 from core.errors import NotImplementedWidgetError
 from core.logger import get_logger
+from core.namespaced_key import NamespacedKey
 
 logger = get_logger(__name__)
 
 
 class Widget(ABC):
+    KEY: NamespacedKey = None
+
     def draw(self, renderer, variable_map):
         raise NotImplementedWidgetError(renderer.__class__.__name__, self.__class__.__name__)
 
