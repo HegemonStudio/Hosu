@@ -7,7 +7,7 @@ Built in Python with a flexible architecture based on **Layout**, **Renderer**, 
 
 ## Requirements
 
-- Python 3.10+
+- Python 3.11+
 - Git (to work with the repository)
 - pip
 
@@ -30,7 +30,7 @@ source .venv/bin/active
 .venv\Scripts\activate
 
 # 4. Install required packages
-pip install python-dotenv Pillow requests colorama
+pip install python-dotenv Pillow requests colorama rosu_pp_py
 ```
 
 ## Run
