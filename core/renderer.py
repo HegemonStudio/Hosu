@@ -15,7 +15,7 @@ class TextAlignment(str, Enum):
     CENTER = "center"
     RIGHT = "right"
 
-
+# TODO: create Color class
 RGBA = Tuple[int, int, int, int]
 
 
@@ -65,6 +65,15 @@ class Renderer(ABC):
         :param fill: Whether to fill the rectangle or not.
         """
         pass
+
+    # TODO: add method to clear the rendering surface
+
+    # TODO: add method to draw line between two points
+    # TODO: add method to draw circle at center position with radius
+    # TODO: add method to draw image at destination rectangle
+
+    # TODO: add measure text that returns width and height of the text in pixels
+
 
     def render_layout(self, layout: Layout, variable_map: VariableMap):
         self.begin(layout)

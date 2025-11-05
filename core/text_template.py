@@ -72,6 +72,7 @@ class TemplateLexer:
         if self.empty():
             return None
         # If next char is '{' start reading variable
+        # TODO: add escape sequences like \{ and \} or {{ and }}
         if self.peek() == '{':
             self.chop(1)  # skip {
             self.trim()
@@ -112,6 +113,7 @@ class TextTemplate:
         else:
             raise TypeError(f"Unsupported variable container: {type(variables)}")
 
+    #  TODO: make it generic with passing a getter function
     def resolve_dict(self, variables: dict[str, Any]) -> str:
         parts: List[str] = []
         for token in self.tokens:

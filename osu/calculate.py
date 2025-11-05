@@ -9,7 +9,7 @@ class Performance:
     pp: float
     star_rating: float
 
-def calculate(beatmap_path: str, replay: OsuReplay) -> Performance:
+def calculate_play_performance(beatmap_path: str, replay: OsuReplay) -> Performance:
     perf = rosu.Performance(
         accuracy=replay.accuracy * 100,
         lazer=False,

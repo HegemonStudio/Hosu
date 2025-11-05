@@ -19,6 +19,7 @@ class NamespacedKey:
         self._validate()
 
     def _validate(self):
+        # TODO: namespace and key cannot be empty.
         # Checking namespace
         for i in range(len(self.namespace)):
             ch = self.namespace[i]
@@ -54,6 +55,8 @@ class NamespacedKey:
 
     @classmethod
     def from_string(cls: Type[Self], string: str) -> Self:
+        # TODO: check is string a string type
+        # TODO: use partition instead of split, cause split trims the spaces between "a:b d"
         args = string.split(":")
         if len(args) != 2:
             raise ValueError(f"Invalid namespaced key format. Expected 'namespace:key'.\n"

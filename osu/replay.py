@@ -1,9 +1,6 @@
 import base64
-import json
 import os
 import struct
-from dataclasses import dataclass
-from json import JSONEncoder
 from typing import BinaryIO
 
 
