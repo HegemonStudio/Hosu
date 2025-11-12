@@ -28,7 +28,7 @@ class OsuAPI:
         :param client_id: OAuth2 ID obtained from the osu API website.
         :param client_secret: OAuth2 client secret obtained from the osu API website.
         """
-        if client_id is None or client_secret is None:
+        if client_id is None or len(client_id) == 0 or client_secret is None or len(client_secret) == 0:
             raise ValueError("client_id and client_secret are required")
 
         self.client_id = client_id
@@ -104,10 +104,9 @@ class OsuAPI:
             with open(OsuAPI.SESSION_PATH) as f:
                 session = json.load(f)
 
-                # TODO: use get with default values
-                self.client_id = session["client_id"]
+                self.client_id = session.get("client_id", self.client_id)
                 self.access_token = session["token"]
-                self.token_expires_at = session["expires_at"]
+                self.token_expires_at = session.get("expires_at", -1.0)
 
                 if time.time() >= self.token_expires_at:
                     logger.info("OsuAPI session expired")

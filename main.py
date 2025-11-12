@@ -1,35 +1,39 @@
 import os
+from pathlib import Path
 
-import dotenv
 from PIL import Image
 
+from core.config import generate_config, load_config
 from core.layout import Layout, Layer
 from core.logger import get_logger
+from core.renderer import TextAlignment
 from core.utils import dump_json
 from core.variable_map import VariableMap
 from core.variables import TextVariable, NumberVariable, ImageURLVariable
-from core.widgets import WidgetRect
+from core.widgets import WidgetRect, WidgetText
 from osu.api import OsuAPI
 from osu.calculate import calculate_play_performance
+from osu.config import OsuAPIConfig
 from osu.replay import OsuReplay
 from renderer.pillow import PillowRenderer
 
 logger = get_logger("Hosu")
 
-
 def main():
+    # Current working directory
+    cwd = Path(os.getcwd())
+    logger.info(f"Current working directory: {cwd}")
     logger.info("Hello Hosu!")
-    # TODO: .env is so annoying, switch to config file later
-    # TODO: generate config.toml
-    dotenv.load_dotenv()
+
+    config_path = Path("config/config.toml")
+    load_config(config_path)
 
     vars = VariableMap()
     vars.set("SCORE", NumberVariable(123))
     vars.set("PLAYER", TextVariable("Moderr"))
     vars.set("BACKGROUND", ImageURLVariable("https://xd.click/czeslaw.png"))
 
-    # TODO: use data from config file
-    api = OsuAPI(os.getenv("CLIENT_ID"), os.getenv("CLIENT_SECRET"))
+    api = OsuAPI(OsuAPIConfig.client_id, OsuAPIConfig.client_secret)
 
     # TODO: use replay from run arguments
     # TODO: add example/replay.osr
@@ -61,6 +65,9 @@ def main():
             WidgetRect().set_color("#122330").set_x(0.5).set_y(0.47).set_width(1).set_height(0.10),
             WidgetRect().set_color("#152A3A").set_x(0.5).set_y(0.55).set_width(1).set_height(0.10)
         ]),
+        Layer([
+            WidgetText().set_x(0.5).set_y(0.5).set_alignment(TextAlignment.CENTER).set_text("Moj pp to {PP}")
+        ])
     ])
 
     # TODO: for later we should use RendererFactory to create renderers

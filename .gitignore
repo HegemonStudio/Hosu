@@ -2,7 +2,8 @@
 old/
 session.json
 data/
-
+run/
+test/
 # Editor
 .idea/
 .vscode/

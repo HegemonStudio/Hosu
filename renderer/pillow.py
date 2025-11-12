@@ -5,6 +5,7 @@ from PIL import Image, ImageDraw, ImageFont
 from core.layout import Layout
 from core.logger import get_logger
 from core.renderer import Renderer, RGBA, TextAlignment
+from renderer.config import RendererPillowConfig
 
 logger = get_logger(__name__)
 
@@ -15,7 +16,7 @@ class PillowRenderer(Renderer):
     def draw_text(self, position: Tuple[float, float], text: str, font_size: float = 1.0, color: RGBA = (255, 255, 255, 255),
                   align: TextAlignment = TextAlignment.LEFT, drop_shadow: bool = False) -> None:
         # TODO: remove hardcoded font path
-        font = ImageFont.truetype("resources/fonts/Roboto.ttf", self.layout.width / 16 * font_size)
+        font = ImageFont.truetype(RendererPillowConfig.font_path, self.layout.width / 16 * font_size)
 
         x = self.layout.width * position[0]
         y = self.layout.height * position[1]
